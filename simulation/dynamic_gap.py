@@ -36,7 +36,7 @@ class Dynamic_Gap(object):
         self.quad_sT = self.goal_point.tolist() + [1.0, 0.0, 0.0, 0.0] + [0.0, 0.0, 0.0]
 
         # Simulation Parameters
-        self.sim_T = 3.0
+        self.sim_T = 4.0
         self.sim_dt = 0.02
         self.max_episode_steps = int(self.sim_T/self.sim_dt)
 
@@ -105,7 +105,7 @@ class Dynamic_Gap(object):
         ref_traj = quad_s0 + plan_pend_traj + self.quad_sT      # 拼接初始状态，预测途中轨迹(门的轨迹)，终点状态，形成完整参考轨迹
 
         # run nonlinear model predictive control
-        quad_act, pred_traj = self.mpc.solver(ref_traj)
+        quad_act, pred_traj = self.mpc.solve(ref_traj)
 
         # run the actual control command on the quadrotor
         self.quad_state = self.quad.rk4_propagation(quad_act)

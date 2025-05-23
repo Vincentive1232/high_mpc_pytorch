@@ -122,8 +122,8 @@ class Pendulum_v1(object):
         """
         pos = np.zeros(shape=3)
         pos[0] = self.pivot_point[0]
-        pos[1] = self.pivot_point[1] + self.length*np.sin(state[kTheta])
-        pos[2] = self.pivot_point[2] + self.length * np.cos(state[kTheta])
+        pos[1] = self.pivot_point[1] + self.length * np.sin(state[kTheta])
+        pos[2] = self.pivot_point[2] - self.length * np.cos(state[kTheta])
         return pos
 
 
