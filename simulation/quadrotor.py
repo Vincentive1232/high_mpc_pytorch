@@ -24,14 +24,14 @@ class Quadrotor_v0(object):
         ])
         # Sampling range of the quadrotor's initial velocity
         self._vxyz_dist = np.array([
-            [-1.0, -1.0],  # x
+            [-1.0,  1.0],  # x
             [-1.0,  1.0],  # y
             [-1.0,  1.0]   # z
         ])
 
         # obstacles position upper bound and lower bound
         self.obs_low = np.array([-10, -10, -10, -np.pi, -np.pi, -np.pi, -10, -10, -10])
-        self.obs_high = np.array([10, 10, 10, -np.pi, np.pi, np.pi, 10, 10, 10])
+        self.obs_high = np.array([10, 10, 10, np.pi, np.pi, np.pi, 10, 10, 10])
 
         # reset when initialized
         self.reset()
@@ -118,7 +118,7 @@ class Quadrotor_v0(object):
         thrust, wx, wy, wz = action
         dstate = np.zeros(shape=self.state_dim)
 
-        dstate[kPosX:kPosZ+1] = state[kPosX:kPosZ+1]
+        dstate[kPosX:kPosZ+1] = state[kVelX:kVelZ+1]
 
         qw, qx, qy, qz = self.get_quaternion()
 

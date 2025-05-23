@@ -54,7 +54,7 @@ class MPC(object):
 
         # constant cost matrix for tracking the goal point
         self.Q_goal = np.diag([
-            0, 100, 100,        # delta_x, delta_y, delta_z
+            100, 100, 100,        # delta_x, delta_y, delta_z
             10, 10, 10, 10,     # delta_qw, delta_qx, delta_qy, delta_qz
             0, 10, 10           # delta_vx, delta_vy, delta_vz
         ])
@@ -164,6 +164,16 @@ class MPC(object):
         # # # # # # # # # # # # # # # # # # # #
         # ------ Nonlinear Optimization -------
         # # # # # # # # # # # # # # # # # # # #
+        self.nlp_w = []  # nlp variables
+        self.nlp_w0 = []  # initial guess of nlp variables
+        self.lbw = []  # lower bound of the variables, lbw <= nlp_x
+        self.ubw = []  # upper bound of the variables, nlp_x <= ubw
+
+        self.mpc_obj = 0  # objective
+        self.nlp_g = []  # constraint functions
+        self.lbg = []  # lower bound of constraint functions, lbg < g
+        self.ubg = []  # upper bound of constraint functions, g < ubg
+
         u_min = [self.thrust_min, -self.w_max_xy, -self.w_max_xy, -self.w_max_yaw]
         u_max = [self.thrust_max,  self.w_max_xy,  self.w_max_xy,  self.w_max_yaw]
         x_bound = ca.inf
@@ -264,10 +274,11 @@ class MPC(object):
             "ipopt.print_level":0,
             "print_time":False
         }
-        self.solver = ca.nlpsol("solver", "ipopt", nlp_dict, ipopt_options)       # 定义一个solver
-        print("Generating shared library................")
-        cname = self.solver.generate_dependencies("mpc_v1.c")                          # 生成c代码，用以加速
-        system('gcc -fPIC -shared -O3' + cname + ' -o ' + self.so_path)                # 用gcc进行编译，并且生成为一个.so文件
+        # self.solver = ca.nlpsol("solver", "ipopt", nlp_dict, ipopt_options)       # 定义一个solver
+        # print("Generating shared library................")
+        # cname = self.solver.generate_dependencies("mpc_v1.c")                          # 生成c代码，用以加速
+        # system('gcc -shared -fPIC -o' + self.so_path + cname)                # 用gcc进行编译，并且生成为一个.so文件
+        # system(f"gcc -shared -fPIC -o {self.so_path} {cname}")
         self.solver = ca.nlpsol("solver", "ipopt", self.so_path, ipopt_options)   # 用生成的c代码库重载solver，加速
 
 
@@ -291,7 +302,7 @@ class MPC(object):
 
         x0_array = np.reshape(sol_x0[:-self.state_dim], newshape=(-1, self.state_dim+self.action_dim))
 
-        return opt_u. x0_array
+        return opt_u, x0_array
 
 
     def sys_dynamics(self, dt):

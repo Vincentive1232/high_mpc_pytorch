@@ -105,7 +105,7 @@ class Dynamic_Gap(object):
         ref_traj = quad_s0 + plan_pend_traj + self.quad_sT      # 拼接初始状态，预测途中轨迹(门的轨迹)，终点状态，形成完整参考轨迹
 
         # run nonlinear model predictive control
-        quad_act, pred_traj = self.mpc.solver(ref_traj)
+        quad_act, pred_traj = self.mpc.solve(ref_traj)
 
         # run the actual control command on the quadrotor
         self.quad_state = self.quad.rk4_propagation(quad_act)

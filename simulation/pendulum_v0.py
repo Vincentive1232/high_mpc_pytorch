@@ -31,7 +31,7 @@ class Pendulum_v0(object):
         self.action_dim = 0
 
         # define some physical constants
-        self.damping = 0.2
+        self.damping = 0.1
         self.mass = 2.0
         self.gz = 9.81
         self.dt = dt
@@ -177,7 +177,7 @@ class Pendulum_v0(object):
     def to_planar_coordinates(pivot_point, l, theta):
         # 将gate的中心点坐标转换到平面坐标系上
         y = pivot_point[1] + l*np.sin(theta)
-        z = pivot_point[2] + l*np.cos(theta)
+        z = pivot_point[2] - l*np.cos(theta)
 
         return y, z
 

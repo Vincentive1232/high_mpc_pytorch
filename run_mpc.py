@@ -55,6 +55,7 @@ def main():
 
     # run mpc
     run_mpc(env)
+    print("mpc optimization completed")
 
     run_frame = partial(run_mpc, env)
     ani = animation.FuncAnimation(sim_visual.fig, sim_visual.update, frames=run_frame,
