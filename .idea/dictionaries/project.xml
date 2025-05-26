@@ -5,6 +5,7 @@
       <w>dstate</w>
       <w>nlpsol</w>
       <w>nmpc</w>
+      <w>npzfile</w>
       <w>posdef</w>
       <w>pred</w>
       <w>qpoases</w>
