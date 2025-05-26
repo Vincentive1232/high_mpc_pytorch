@@ -3,6 +3,7 @@
     <words>
       <w>cstate</w>
       <w>dstate</w>
+      <w>highmpc</w>
       <w>nlpsol</w>
       <w>nmpc</w>
       <w>npzfile</w>
