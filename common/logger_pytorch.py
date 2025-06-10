@@ -7,11 +7,11 @@ Adapted from OpenAI Baselines logger.
 import os
 import sys
 import json
-import time
+# import time
 import datetime
 import tempfile
 from collections import defaultdict
-from contextlib import contextmanager
+# from contextlib import contextmanager
 from torch.utils.tensorboard import SummaryWriter as TorchSummaryWriter
 
 DEBUG = 10
@@ -140,20 +140,24 @@ class Logger:
         self.output_formats = output_formats
 
     def logkv(self, key, val):
+        # 记录一个键值对
         self.name2val[key] = val
 
     def logkv_mean(self, key, val):
+        # 自动计算平均值
         oldval, count = self.name2val[key], self.name2cnt[key]
         self.name2val[key] = oldval * count / (count + 1) + val / (count + 1)
         self.name2cnt[key] = count + 1
 
     def dumpkvs(self):
+        # 打印并清空当前记录
         for fmt in self.output_formats:
             fmt.writekvs(self.name2val)
         self.name2val.clear()
         self.name2cnt.clear()
 
     def log(self, *args, level=INFO):
+        # 打印日志行
         if self.level <= level:
             for fmt in self.output_formats:
                 if isinstance(fmt, SeqWriter):

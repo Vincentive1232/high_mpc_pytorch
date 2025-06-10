@@ -287,10 +287,10 @@ class High_MPC(object):
             "ipopt.print_level": 0,
             "print_time": False
         }
-        self.solver = ca.nlpsol("solver", "ipopt", nlp_dict, ipopt_options)         # 定义一个solver
-        print("Generating shared library................")
-        cname = self.solver.generate_dependencies("mpc_v1.c")                       # 生成c代码，用以加速
-        system(f"gcc -shared -fPIC -o {self.so_path} {cname}")                      # 用gcc进行编译，并且生成为一个.so文件
+        # self.solver = ca.nlpsol("solver", "ipopt", nlp_dict, ipopt_options)         # 定义一个solver
+        # print("Generating shared library................")
+        # cname = self.solver.generate_dependencies("mpc_v1.c")                       # 生成c代码，用以加速
+        # system(f"gcc -shared -fPIC -o {self.so_path} {cname}")                      # 用gcc进行编译，并且生成为一个.so文件
         self.solver = ca.nlpsol("solver", "ipopt", self.so_path, ipopt_options)  # 用生成的c代码库重载solver，加速
 
 

@@ -1,0 +1,6 @@
+Logging to /home/vincent/high_mpc_pytorch/saved_policy/highmpc-06-03-12-36-19
+***********************Log & Store Hyper-parameters***********************
+weighted maximum likelihood params
+{'sigma0': 100, 'max_iter': 20, 'n_samples': 20, 'beta0': 3.0}
+***************************************************************************
+********** High MPC Iteration 0 ************

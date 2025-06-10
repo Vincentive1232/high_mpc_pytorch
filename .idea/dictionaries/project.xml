@@ -14,6 +14,8 @@
       <w>quat</w>
       <w>sqpmethod</w>
       <w>vxyz</w>
+      <w>writekvs</w>
+      <w>writeseq</w>
     </words>
   </dictionary>
 </component>

@@ -114,17 +114,18 @@ def run_wml(env, logger, save_dir, n_samples, max_iter, sigma0, beta0=3.0):
             act = pi.sample()
 
             rewards[j_sample], _ = env.episode(act)
+            Actions[j_sample, :] = act
 
         beta = beta0 / (np.max(rewards) - np.min(rewards))
         weights = np.exp(beta*(rewards - np.max(rewards)))
         Weights = weights / np.mean(weights)
 
         logger.log("********** High MPC Iteration %i ************"%i_iter)
-        logger.record_tabular("iter", i_iter)
-        logger.record_tabular("reward", np.mean(rewards))
-        logger.record_tabular("mu", pi.mu[0])
-        logger.record_tabular("scale", pi.cov[0, 0])
-        logger.dump_tabular()
+        logger.logkv("iter", i_iter)
+        logger.logkv("reward", np.mean(rewards))
+        logger.logkv("mu", pi.mu[0])
+        logger.logkv("scale", pi.cov[0, 0])
+        logger.dumpkvs()
 
         progress_path = save_dir + "/training_data"
         if not os.path.exists(progress_path):

@@ -48,4 +48,16 @@ def main():
     save_dir = U.get_dir(args.save_dir + "/saved_policy")
     save_dir = os.path.join(save_dir, datetime.datetime.now().strftime("highmpc-%m-%d-%H-%M-%S"))
 
+    logger = logger_pytorch.configure(dir=save_dir)
+    logger.log("***********************Log & Store Hyper-parameters***********************")
+    logger.log("weighted maximum likelihood params")
+    logger.log(wml_params)
+    logger.log("***************************************************************************")
+    high_policy.run_wml(env=env, logger=logger, save_dir=save_dir, **wml_params)
+
+
+if __name__=="__main__":
+    main()
+
+
 
