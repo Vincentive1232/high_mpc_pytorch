@@ -1,4 +1,5 @@
 import os
+import time
 import datetime
 import argparse
 import numpy as np
@@ -6,10 +7,12 @@ from functools import partial
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import torch
+import meshcat
 
 from simulation.dynamic_gap import Dynamic_Gap
 from mpc.high_mpc import High_MPC
 from simulation.animation import SimVisual
+from simulation.animation_meshcat import Sim_Visual_Meshcat
 from common import logger_pytorch
 from common import utils as U
 from policy import deep_high_policy
@@ -55,6 +58,46 @@ def run_deep_high_mpc(env, actor_params, load_dir):
             #
             obs = next_obs
             ep_reward += reward
+
+            #
+            ep_len += 1
+
+            #
+            update = False
+            if t >= env.sim_T:
+                update = True
+            yield [info, t, update]
+
+
+def run_deep_high_mpc_meshcat(env, actor_params, load_dir, vis_env):
+    obs_dim = env.observation_space.shape[0]
+    act_dim = env.action_space.shape[0]
+
+    actor = deep_high_policy.Actor(obs_dim, act_dim)
+    actor.load_weights(load_dir)
+    actor.eval()
+
+    ep_len, ep_reward = 0, 0
+    for i in range(10):
+        obs = env.reset()
+        t = 0
+        while t < env.sim_T:
+            t += env.sim_dt
+
+            obs_tmp = np.reshape(obs, (1, -1))
+            obs_tensor = torch.from_numpy(obs_tmp).float()
+
+            act_tensor = actor(obs_tensor)
+            act = act_tensor.detach().cpu().numpy()[0]
+            # act = actor(obs_tmp).numpy()[0]
+
+            # execute action
+            next_obs, reward, _, info = env.step(act)
+
+            #
+            obs = next_obs
+            ep_reward += reward
+            vis_env.update(env.pend_state[0], env.quad_state[0:3], env.quad_state[3:7])
 
             #
             ep_len += 1
@@ -130,9 +173,13 @@ def main():
 
         plt.tight_layout()
         plt.show()
-
+    elif args.option == 3:
+        load_dir = args.save_dir + "/Weights/act_net/weight_900.pt"
+        vis = meshcat.Visualizer().open()
+        vis_env = Sim_Visual_Meshcat(vis)
+        for info, t, _ in run_deep_high_mpc_meshcat(env, actor_params, load_dir, vis_env):
+            time.sleep(0.01)
 
 if __name__=="__main__":
     main()
-
 
